@@ -55,20 +55,20 @@ services:
             - "5432:5432"
         volumes:
             - pv-data:/var/lib/postgresql/data
-      pvstrm:
+     #pvstrm:
         #image: "paravision/streaming:v4.0.2-openvino"
-        image: "eyemetricfr/pv-streaming:v4.0.2-openvino"
-        container_name: pv-streaming
-        network_mode: bridge
-        restart: always
-        ports:
-            - "5000:5000"
-            - "5050:5050"
-            - "5051:5051"
-        depends_on:
-            - pvdb
-        links:
-            - pvdb
+        #image: "eyemetricfr/pv-streaming:v4.0.2-openvino"
+        #container_name: pv-streaming
+        #network_mode: bridge
+        #restart: always
+        #ports:
+        #    - "5000:5000"
+        #    - "5050:5050"
+        #    - "5051:5051"
+        #depends_on:
+        #    - pvdb
+        #links:
+        #    - pvdb
 
 volumes:
     fr-data:

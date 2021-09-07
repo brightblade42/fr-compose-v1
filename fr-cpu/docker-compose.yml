@@ -24,6 +24,7 @@ services:
             
         volumes:
             - fr-data:/app/data
+            - /home/eyemetric/.aspnet/https:/https
             - /etc/timezone:/etc/timezone:ro
             - /etc/localtime:/etc/localtime:ro
     pvapi:
@@ -54,7 +55,7 @@ services:
             - "5432:5432"
         volumes:
             - pv-data:/var/lib/postgresql/data
-    pvstrm:
+      pvstrm:
         #image: "paravision/streaming:v4.0.2-openvino"
         image: "eyemetricfr/pv-streaming:v4.0.2-openvino"
         container_name: pv-streaming

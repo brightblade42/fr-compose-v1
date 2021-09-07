@@ -1,0 +1,88 @@
+version: "3.9"
+services:
+    fr1:
+        image: "eyemetricfr/safr:v0.9.15-test"
+        container_name: fr1
+        environment:
+            - TPASS_USER=admin
+            - TPASS_PWD=njbs1968
+            - TPASS_ADDR=https://0.0.0.0/tpassservice/api
+            - PVAPI_ADDR=http://0.0.0.0:5656/api
+            - IMG_URL_TYPE=external
+            - TZ=America/New_York
+            - ASPNETCORE_URLS=https://+443;http://+80
+            - ASPNETCORE_HTTPS_PORT=443
+            - ASPNETCORE_Kestrel__Certificates__Default__Password=password
+            - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/EyemetricFR.Server.pfx 
+        network_mode: bridge
+        depends_on:
+            - pvdb
+        restart: always
+        ports:
+            - "80:8085"
+            - "8085:8085"
+            - "443:443"
+
+        volumes:
+            - fr-data:/app/data
+            - /etc/timezone:/etc/timezone:ro
+            - /etc/localtime:/etc/localtime:ro
+            - /home/eyemetric/.aspnet/https:/https
+    pvapi:
+        image: "paravision/api:v12.5.0-zill-tensorrt"
+        container_name: pvapi
+        deploy:
+            resources:
+                reservations:
+                    devices:
+                    - capabilities: [gpu]
+        environment:
+            - DATABASE_URI=postgres://admin:admin@localhost/frdatabase
+            - TZ=America/New_York
+        network_mode: host 
+        restart: always
+        #ports:
+        #       - "5656:5656"
+        depends_on:
+            - pvdb
+              #links:
+              #- pvdb
+    pvdb:
+        image: "paravision/postgres:12.0"
+        container_name: pvdb
+        network_mode: bridge
+        #environment:
+        #    - POSTGRES_USER=admin
+        #    - POSTGRES_PASSWORD=admin
+        #    - POSTGRES_DB=frdatabase
+        ports:
+            - "5432:5432"
+        restart: always
+        volumes:
+            - pv-data:/var/lib/postgresql/data
+
+    pvstrm:
+        image: "paravision/streaming:v4.0.2-tensorrt"
+        container_name: pv-streaming
+        deploy:
+            resources:
+                reservations:
+                    devices:
+                    - capabilities: [gpu]
+        environment:
+            - TZ=America/New_York
+            - INFERENCE_WORKERS=4
+        network_mode: bridge
+        restart: always
+        ports:
+            - "5000:5000"
+            - "5050:5050"
+            - "5051:5051"
+        depends_on:
+            - pvdb
+        links:
+            - pvdb
+        
+volumes:
+    fr-data:
+    pv-data:

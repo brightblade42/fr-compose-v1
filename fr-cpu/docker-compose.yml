@@ -1,0 +1,74 @@
+version: "3.9"
+services:
+    fr1:
+        image: "eyemetricfr/safr:v0.9.15-test"
+        container_name: fr1
+        restart: always
+        environment:
+            - TPASS_USER=admin
+            - TPASS_PWD=njbs1968
+            - TPASS_ADDR=https://0.0.0.0/tpassservice/api
+            - PVAPI_ADDR=http://0.0.0.0:5656/api
+            - IMG_URL_TYPE=external
+            - TZ=America/Denver
+            - ASPNETCORE_URLS=https://+443;http://+80
+            - ASPNETCORE_HTTPS_PORT=443
+            - ASPNETCORE_Kestrel__Certificates__Default__Password=password
+            - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/EyemetricFR.Server.pfx
+        network_mode: bridge
+        depends_on:
+            - pvdb
+        ports:
+            - "80:8085"
+            - "443:443"
+            
+        volumes:
+            - fr-data:/app/data
+            - /etc/timezone:/etc/timezone:ro
+            - /etc/localtime:/etc/localtime:ro
+    pvapi:
+        #image: "paravision/api:v12.5.0-zill-openvino"
+        image: "eyemetricfr/pvapi:v12.5.0-zill-openvino"
+        container_name: pvapi
+        environment:
+            - DATABASE_URI=postgres://admin:admin@pvdb/frdatabase
+        network_mode: bridge
+        restart: always
+        ports:
+            - "5656:5656"
+        depends_on:
+            - pvdb
+        links:
+            - pvdb
+    pvdb:
+        #image: "paravision/postgres:12.0"
+        image: "eyemetricfr/pvdb:12.0"
+        container_name: pvdb
+        network_mode: bridge
+        restart: always
+        #environment:
+        #    - POSTGRES_USER=admin
+        #    - POSTGRES_PASSWORD=admin
+        #    - POSTGRES_DB=frdatabase
+        ports:
+            - "5432:5432"
+        volumes:
+            - pv-data:/var/lib/postgresql/data
+    pvstrm:
+        #image: "paravision/streaming:v4.0.2-openvino"
+        image: "eyemetricfr/pv-streaming:v4.0.2-openvino"
+        container_name: pv-streaming
+        network_mode: bridge
+        restart: always
+        ports:
+            - "5000:5000"
+            - "5050:5050"
+            - "5051:5051"
+        depends_on:
+            - pvdb
+        links:
+            - pvdb
+
+volumes:
+    fr-data:
+    pv-data:

@@ -11,10 +11,10 @@ services:
             - PVAPI_ADDR=http://0.0.0.0:5656/api
             - IMG_URL_TYPE=external
             - TZ=America/Denver
-            - ASPNETCORE_URLS=https://+443;http://+80
-            - ASPNETCORE_HTTPS_PORT=443
-            - ASPNETCORE_Kestrel__Certificates__Default__Password=password
-            - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/EyemetricFR.Server.pfx
+              #- ASPNETCORE_URLS=https://+443;http://+80
+              #- ASPNETCORE_HTTPS_PORT=443
+              #- ASPNETCORE_Kestrel__Certificates__Default__Password=password
+              #- ASPNETCORE_Kestrel__Certificates__Default__Path=/https/EyemetricFR.Server.pfx
         network_mode: bridge
         depends_on:
             - pvdb
@@ -24,7 +24,7 @@ services:
             
         volumes:
             - fr-data:/app/data
-            - /home/eyemetric/.aspnet/https:/https
+              #- /home/eyemetric/.aspnet/https:/https
             - /etc/timezone:/etc/timezone:ro
             - /etc/localtime:/etc/localtime:ro
     pvapi:

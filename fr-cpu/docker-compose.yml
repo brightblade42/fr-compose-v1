@@ -1,7 +1,8 @@
 version: "3.9"
 services:
     fr1:
-        image: "eyemetricfr/safr:v0.9.15-test"
+        #image: "eyemetricfr/safr:v0.9.15-test"
+        image: "eyemetricfr/safr:v0.9.16-api"
         container_name: fr1
         restart: always
         environment:
@@ -10,7 +11,7 @@ services:
             - TPASS_ADDR=https://0.0.0.0/tpassservice/api
             - PVAPI_ADDR=http://0.0.0.0:5656/api
             - IMG_URL_TYPE=external
-            - TZ=America/Denver
+            - TZ=America/New_York
               #- ASPNETCORE_URLS=https://+443;http://+80
               #- ASPNETCORE_HTTPS_PORT=443
               #- ASPNETCORE_Kestrel__Certificates__Default__Password=password
